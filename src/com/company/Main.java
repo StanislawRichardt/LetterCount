@@ -6,13 +6,12 @@ import java.util.List;
 
 public class Main {
     static String filePath= "E:\\Repozytoria\\LetterCount\\example\\testFile.txt";
-    static List<int[][]> symbolCounterList = new ArrayList<int[][]>();
+    static List<String[]> symbolCounterList = new ArrayList<>();
+    static List<double[]> probabilityList = new ArrayList<>();
     static BufferedReader bufferedReader = null;
-
+    static int fileLength=0;
     // Functionalities: Do a bunch of magic to prepare a file to be read
     public static void fileUtility() throws FileNotFoundException {
-
-
         File file = new File(filePath);
         FileInputStream fileStream = new FileInputStream(file);
         InputStreamReader input = new InputStreamReader(fileStream);
@@ -20,36 +19,35 @@ public class Main {
     }
 
     //Functionalities: Counts characters in a file
-    private static int charCount() {
+    private static void charCount() {
 
-
-        int charCount = 0;
         String data;
         try {
             while ((data = bufferedReader.readLine()) != null) {
-                charCount += data.length();
+                fileLength += data.length();
             }
         }catch(IOException e)
         {
             e.printStackTrace();
         }
-        return charCount;
     }
 
     /* Functionalities:
                 1. Open file through fileUtility()
-                2. Iterate through file and sends chars to saveToList()
+                2. Sets fileLength through charCount()
+                3. Iterate through file and sends chars to searchAndSave()
             */
-    private static void readFile(){
+    private static void dictionaryCreation(){
 
         char[] cbuf = new char[1];
 
         try{
             fileUtility();
+            charCount();
 
-            for(int i=0;i<charCount();i++) {
+            for(int i=0;i<fileLength;i++) {
                 bufferedReader.read(cbuf);
-                saveToList(cbuf[0]);
+                searchAndSave(cbuf[0]);
             }
 
         }catch(FileNotFoundException e){
@@ -59,21 +57,51 @@ public class Main {
         }
     }
 
-    private static void saveToList(char letter){
-        if(searchList(letter)){
-
+    /*Functionalities:
+        1. Search letter through List
+        2. Update letter counter
+        3. Write new letter to List
+    */
+    private static void searchAndSave(char letter) {
+        for (int i = 0; i < symbolCounterList.size(); i++) {
+            if (symbolCounterList.get(i)[0] == Character.toString(letter)) {
+                int counter= Integer.parseInt(symbolCounterList.get(i)[1]) + 1;
+                symbolCounterList.set(i, new String[]{Character.toString(letter),Integer.toString(counter)});
+                return;
+            }
         }
-        else{
+        symbolCounterList.add(new String[]{Character.toString(letter), "1"});
+    }
 
+    private static void dictionaryDisplay(){
+
+    }
+
+    private static void entropyInfoListCreation(){
+        boolean isNumberFound=false;
+        for(int j=0;j<symbolCounterList.size();j++) {
+            for (int i = 0; i < probabilityList.size(); i++) {
+                if (Double.parseDouble(symbolCounterList.get(j)[1]) == probabilityList.get(i)[0]){
+                    probabilityList.get(i)[1]++;
+                    isNumberFound=true;
+                    break;
+                } else isNumberFound=false;
+            }
+            if(!isNumberFound) {
+                probabilityList.add(new double[]{Double.parseDouble(symbolCounterList.get(j)[1]), 1});
+            }
         }
     }
 
-    private static boolean searchList(char letter){
-        return true;
+    private static void entropyDisplay(){
+
     }
 
     public static void main(String[] args) {
-        readFile();
+        dictionaryCreation();
+        dictionaryDisplay();
+        entropyInfoListCreation();
+        entropyDisplay();
 
     }
 }
