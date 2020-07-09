@@ -20,19 +20,6 @@ public class Main {
         bufferedReader = new BufferedReader(input);
     }
 
-    //Functionalities: Counts characters in a file
-    private static void charCount() {
-
-        String data;
-        try {
-            while ((data = bufferedReader.readLine()) != null) {
-                fileLength += data.length();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /* Functionalities:
                 1. Open file through fileUtility()
                 2. Sets fileLength through charCount()
@@ -40,15 +27,17 @@ public class Main {
             */
     private static void dictionaryCreation() {
 
-        char[] cbuf = new char[1];
-
         try {
-            fileUtility();
-            charCount();
 
-            for (int i = 0; i < fileLength; i++) {
-                bufferedReader.read(cbuf);
-                searchAndSave(cbuf[0]);
+            fileUtility();
+            String data;
+            while ((data = bufferedReader.readLine()) != null) {
+
+                fileLength += data.length();
+                for(int j=0;j<fileLength;j++)
+                {
+                    searchAndSave(data.charAt(j));
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -65,7 +54,7 @@ public class Main {
     */
     private static void searchAndSave(char letter) {
         for (int i = 0; i < symbolCounterList.size(); i++) {
-            if (symbolCounterList.get(i)[0] == Character.toString(letter)) {
+            if (symbolCounterList.get(i)[0].charAt(0) == letter) {
                 int counter = Integer.parseInt(symbolCounterList.get(i)[1]) + 1;
                 symbolCounterList.set(i, new String[]{Character.toString(letter), Integer.toString(counter)});
                 return;
@@ -83,7 +72,10 @@ public class Main {
             double counter = Double.parseDouble(symbolCounterList.get(i)[1]) / fileLength;
             symbolCounterList.set(i, new String[]{symbolCounterList.get(i)[0], Double.toString(counter)});
         }
-        System.out.println(symbolCounterList);
+        for (int i = 0; i < symbolCounterList.size(); i++) {
+            System.out.println(symbolCounterList.get(i)[0]+" | "+symbolCounterList.get(i)[1]);
+        }
+
     }
 
     //Functionalities: Creates a List of info for counting an entropy
@@ -113,7 +105,7 @@ public class Main {
             double log = Math.log(Double.parseDouble(symbolCounterList.get(i)[1])) / Math.log(2);
             entropy = entropy - probabilityList.get(i)[1] * Double.parseDouble(symbolCounterList.get(i)[1]) * log;
         }
-        System.out.println("Entropy of this file is" + entropy + " bit per symbol");
+        System.out.println("Entropy of this file is " + entropy + " bit per symbol");
     }
 
     public static void main(String[] args) {
