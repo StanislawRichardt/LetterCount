@@ -34,12 +34,12 @@ public class Main {
             while ((data = bufferedReader.readLine()) != null) {
 
                 fileLength += data.length();
-                for(int j=0;j<fileLength;j++)
+                for(int j=0;j<data.length();j++)
                 {
                     searchAndSave(data.charAt(j));
                 }
             }
-
+            bufferedReader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -113,5 +113,6 @@ public class Main {
         dictionaryDisplay();
         entropyInfoListCreation();
         entropyDisplay();
+
     }
 }
